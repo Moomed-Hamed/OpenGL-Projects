@@ -1,2 +1,2 @@
 # OpenGL-Projects
-This is a place where you will find various OpenGL projects that you can use or study
+I put all my OpenGL projects here, feel free to use them or study them in accordance with the license
