@@ -8,11 +8,6 @@
 
 typedef uint32 TileID;
 
-struct Map
-{
-	TileID tiles[NUM_MAP_TILES];
-};
-
 // rendering
 
 struct Tile_Drawable

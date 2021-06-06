@@ -1,2 +1,2 @@
 # Tower Defense Game
-the clue remains in the title
+this is a game where you defend towers

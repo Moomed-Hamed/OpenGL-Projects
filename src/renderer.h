@@ -69,7 +69,7 @@ void free(Shader shader)
 	glDeleteShader(shader.id);
 }
 
-// make sure you bind the shader first!
+// make sure you bind a shader *before* calling these!
 void set_int  (Shader shader, const char* name, int value  )
 {
 	glUniform1i(glGetUniformLocation(shader.id, name), value);
@@ -341,7 +341,7 @@ struct G_Buffer
 {
 	GLuint FBO; // frame buffer object
 	GLuint positions, normals, albedo; // textures
-	GLuint VAO, VBO, EBO;
+	GLuint VAO, VBO, EBO; // for drawing the quad
 };
 
 void init_g_buffer(G_Buffer* buf, Window window)

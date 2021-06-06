@@ -25,14 +25,14 @@ struct Point_Light {
 };
 
 struct Spot_Light {
-    vec3  position;
-    vec3  direction;
-    float inner_cutoff; // used to fade away light
-	 float outer_cutoff; // max angle of the light
+	vec3  position;
+	vec3  direction;
+	float inner_cutoff; // used to fade away light
+	float outer_cutoff; // max angle of the light
 
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
 
 	float linear;
 	float quadratic;

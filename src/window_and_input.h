@@ -111,6 +111,21 @@ void update_mouse(Mouse* mouse, Window window)
 	}
 }
 
+// for selecting game objecs
+vec3 get_mouse_world_dir(Mouse mouse, mat4 proj_view)
+{
+	proj_view = glm::inverse(proj_view); //what is an unproject matrix?
+
+	vec4 ray_near = vec4(mouse.norm_x, mouse.norm_y, -1, 1); // near plane is z = -1
+	vec4 ray_far = vec4(mouse.norm_x, mouse.norm_y, 0, 1);
+
+	// these are actually using inverse(proj_view)
+	ray_near = proj_view * ray_near; ray_near /= ray_near.w;
+	ray_far  = proj_view * ray_far;  ray_far /= ray_far.w;
+
+	return glm::normalize(ray_far - ray_near);
+}
+
 #define NUM_KEYBOARD_BUTTONS 20
 struct Keyboard
 {
