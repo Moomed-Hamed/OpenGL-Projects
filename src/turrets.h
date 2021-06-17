@@ -58,7 +58,6 @@ struct Turret_Renderer
 	Shader shader;
 };
 
-
 void init(Turret_Renderer* renderer)
 {
 	load(&renderer->mesh, "assets/meshes/turret.mesh", sizeof(renderer->turrets));

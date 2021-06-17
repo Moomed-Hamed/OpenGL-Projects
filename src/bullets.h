@@ -56,7 +56,6 @@ struct Bullet_Renderer
 	Shader shader;
 };
 
-
 void init(Bullet_Renderer* renderer)
 {
 	load(&renderer->mesh, "assets/meshes/ball.mesh", sizeof(renderer->bullets));

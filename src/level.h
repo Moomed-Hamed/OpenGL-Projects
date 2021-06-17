@@ -15,6 +15,7 @@ void update_level(Level* level, float dtime)
 	Turret* turrets = level->turrets;
 	Enemy*  enemies = level->enemies;
 
+	// bullet collisions
 	for (int i = 0; i < MAX_BULLETS; i++) {
 	for (int j = 0; j < MAX_ENEMIES; j++)
 	{
@@ -25,6 +26,7 @@ void update_level(Level* level, float dtime)
 		}
 	} }
 
+	// enemy movement/deaths
 	for (int i = 0; i < MAX_ENEMIES; i++)
 	{
 		if (enemies[i].type == NULL) continue;
@@ -58,6 +60,7 @@ void update_level(Level* level, float dtime)
 		}
 	}
 
+	// turret aiming & firing
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
 		if (turrets[i].type == NULL) continue;

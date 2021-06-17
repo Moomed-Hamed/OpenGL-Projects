@@ -27,7 +27,7 @@ struct Tile_Renderer
 
 void init(Tile_Renderer* renderer)
 {
-	load(&renderer->tile_mesh, "assets/meshes/cube.mesh", sizeof(renderer->tiles));
+	load(&renderer->tile_mesh, "assets/meshes/tile.mesh", sizeof(renderer->tiles));
 	mesh_add_attrib_vec3(2, sizeof(Tile_Drawable), 0); // world pos
 	mesh_add_attrib_vec3(3, sizeof(Tile_Drawable), sizeof(vec3)); // color
 
