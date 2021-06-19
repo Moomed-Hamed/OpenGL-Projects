@@ -584,6 +584,13 @@ void camera_update_dir(Camera* camera, float dx, float dy, float sensitivity = 0
 	camera->right = normalize(cross(camera->front, vec3(0, 1, 0)));
 	camera->up    = normalize(cross(camera->right, camera->front));
 }
+
+void camera_update_dir(Camera* camera, vec3 front)
+{
+	camera->front = normalize(front);
+	camera->right = normalize(cross(camera->front, vec3(0, 1, 0)));
+	camera->up = normalize(cross(camera->right, camera->front));
+}
 void camera_update_pos(Camera* camera, int direction, float distance)
 {
 	if (direction == DIR_FORWARD ) camera->position += camera->front * distance;

@@ -78,7 +78,7 @@ void update_renderer(Bullet_Renderer* renderer, Bullet* bullets)
 		if (bullets[i].type != NULL)
 		{
 			memory->position = bullets[i].position;
-			memory->color = vec3(0, 0, 1);
+			memory->color = vec3(1, 1, 1);
 
 			num_bullets++;
 			memory++;

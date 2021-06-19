@@ -151,8 +151,8 @@ void init_keyboard(Keyboard* keyboard)
 	keyboard->SPACE = { false, false, GLFW_KEY_SPACE };
 
 	keyboard->W = { false, false, GLFW_KEY_W };
-	keyboard->A = { false, false, GLFW_KEY_S };
-	keyboard->S = { false, false, GLFW_KEY_A };
+	keyboard->A = { false, false, GLFW_KEY_A };
+	keyboard->S = { false, false, GLFW_KEY_S };
 	keyboard->D = { false, false, GLFW_KEY_D };
 
 	keyboard->T = { false, false, GLFW_KEY_T };

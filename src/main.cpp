@@ -46,11 +46,20 @@ int main()
 
 		if (keys.ESC.is_pressed) break;
 
-		camera_update_dir(&camera, mouse.dx, mouse.dy);
-		if (keys.W.is_pressed) camera_update_pos(&camera, DIR_FORWARD , 8 * frame_time);
-		if (keys.A.is_pressed) camera_update_pos(&camera, DIR_BACKWARD, 8 * frame_time);
-		if (keys.S.is_pressed) camera_update_pos(&camera, DIR_LEFT    , 8 * frame_time);
-		if (keys.D.is_pressed) camera_update_pos(&camera, DIR_RIGHT   , 8 * frame_time);
+		static float theta = PI;
+		static float cam_height = 5;
+		if (mouse.left_button.is_pressed)
+		{
+			theta += mouse.dx * frame_time * .1;
+			cam_height += mouse.dy * frame_time * .4;
+			if (theta >= TWOPI) theta = 0;
+			if (cam_height < 3) cam_height = 3;
+			if (cam_height > 10) cam_height = 10;
+		}
+
+		camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
+
+		camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
 
 		if (mouse.left_button.is_pressed && !mouse.left_button.was_pressed) {}
 		if (mouse.right_button.is_pressed && !mouse.right_button.was_pressed){}
@@ -85,6 +94,9 @@ int main()
 		update_renderer(bullet_renderer, level->bullets);
 
 		mat4 proj_view = proj * glm::lookAt(camera.position, camera.position + camera.front, camera.up);
+
+		vec3 mouse_dir = get_mouse_world_dir(mouse, proj_view);
+		level->bullets[0] = { 1, camera.position + (mouse_dir * 10.f), vec3{} };
 
 		// Geometry pass
 		glBindFramebuffer(GL_FRAMEBUFFER, g_buffer.FBO);
