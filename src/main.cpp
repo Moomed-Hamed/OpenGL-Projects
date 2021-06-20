@@ -72,20 +72,14 @@ int main()
 			camera_update_pos(&camera, DIR_UP   , mouse.dy * frame_time);
 		}
 
-		static bool shit = true;
-		if (shit)
-		{
-			camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
-			camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
-			//shit = false;
-		}
+		camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
+		camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
 
 		if (mouse.left_button.is_pressed && !mouse.left_button.was_pressed) {}
 		if (mouse.right_button.is_pressed && !mouse.right_button.was_pressed){}
 
 		if (keys.E.is_pressed && !keys.E.was_pressed)
 		{
-			//spawn_bullet(level->bullets, BULLET_SMALL, vec3(0, 2, 0), vec3(1, 0, 1));
 			spawn_turret(level->turrets, TURRET_SMALL, vec3(1, 1, 1));
 			spawn_enemy(level->enemies, 1, vec3(0, 1, 0));
 		}
@@ -122,12 +116,26 @@ int main()
 
 			if (intersect_point.x > 0 && intersect_point.x < 16 && intersect_point.z > 0 && intersect_point.z < 16)
 			{
-				level->tiles[TILE_INDEX((int)intersect_point.x, (int)intersect_point.z)] = TILE_ROAD;
+				int i = TILE_INDEX((int)intersect_point.x, (int)intersect_point.z);
+				level->tiles[i] = TILE_ROAD;
+				if (keys.G.is_pressed && !keys.G.was_pressed)
+				{
+					spawn_turret(level->turrets, 1, vec3((int)intersect_point.x, 1, (int)intersect_point.z));
+				}
 			}
 		}
 
 		level->bullets[0] = { 1, intersect_point, vec3{} };
 		//->bullets[1] = { 1, camera.position + vec3(mouse.norm_x, mouse.norm_y, 0.5), vec3{} };
+
+		static float enemy_spawn_timer = 1;
+		enemy_spawn_timer -= frame_time;
+		if (enemy_spawn_timer < 0)
+		{
+			spawn_enemy(level->enemies, 1, vec3(0, 1, 0));
+			enemy_spawn_timer = 1;
+		}
+
 
 		// Geometry pass
 		glBindFramebuffer(GL_FRAMEBUFFER, g_buffer.FBO);

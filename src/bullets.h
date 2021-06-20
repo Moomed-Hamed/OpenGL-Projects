@@ -10,6 +10,7 @@ struct Bullet
 	vec3 position;
 	vec3 velocity;
 	float damage;
+	float lifetime;
 };
 
 void spawn_bullet(Bullet* bullets, uint type, vec3 position, vec3 velocity)
@@ -21,6 +22,7 @@ void spawn_bullet(Bullet* bullets, uint type, vec3 position, vec3 velocity)
 			bullets[i].type = type;
 			bullets[i].position = position;
 			bullets[i].velocity = velocity;
+			bullets[i].lifetime = 5.f;
 
 			return;
 		}
@@ -33,8 +35,13 @@ void update_bullets(Bullet* bullets, float dtime)
 	{
 		if (bullets[i].type != NULL)
 		{
-			// do stuff
 			bullets[i].position += bullets[i].velocity * dtime;
+			bullets[i].lifetime -= dtime;
+
+			if (bullets[i].lifetime < 0)
+			{
+				bullets[i] = {};
+			}
 		}
 	}
 }
@@ -58,7 +65,7 @@ struct Bullet_Renderer
 
 void init(Bullet_Renderer* renderer)
 {
-	load(&renderer->mesh, "assets/meshes/ball.mesh", sizeof(renderer->bullets));
+	load(&renderer->mesh, "assets/meshes/bullet.mesh", sizeof(renderer->bullets));
 	mesh_add_attrib_vec3(2, sizeof(Bullet_Drawable), 0); // world pos
 	mesh_add_attrib_vec3(3, sizeof(Bullet_Drawable), sizeof(vec3)); // color
 

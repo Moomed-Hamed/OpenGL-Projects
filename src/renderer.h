@@ -3,10 +3,10 @@
 /* -- how 2 draw a mesh --
 
 	Shader shader = {};
-	load(shader, "vertex_shader", "fragment_shader");
+	load(&shader, "vertex_shader.vert", "fragment_shader.frag");
 
 	Drawable_Mesh mesh = {};
-	load(mesh, "mesh.model");
+	load(mesh, "object.mesh");
 	
 	bind(shader);
 	draw(mesh);

@@ -56,7 +56,7 @@ void update_level(Level* level, float dtime)
 			}
 
 			vec3 move_dir = glm::normalize(next_node_pos - enemies[i].position);
-			enemies[i].position += (move_dir * 5.f) * dtime;
+			enemies[i].position += (move_dir * 3.5f) * dtime;
 		}
 	}
 
@@ -75,7 +75,12 @@ void update_level(Level* level, float dtime)
 			{
 				if (enemies[j].type != NULL)
 				{
-					vec3 bullet_dir = glm::normalize(enemies[j].position - turrets[i].position);
+					vec3 next_node_pos = level->path_nodes[enemies[i].node_index];
+					vec3 enemy_velocity_dir = glm::normalize(next_node_pos - enemies[i].position);
+
+
+					vec3 predict_assist = enemy_velocity_dir * 4.f;
+					vec3 bullet_dir = glm::normalize((enemies[j].position + predict_assist) - turrets[i].position);
 					spawn_bullet(bullets, 1, turrets[i].position + vec3(0, 1, 0), bullet_dir * 10.f);
 					turrets[i].cooldown = .5;
 					break;
