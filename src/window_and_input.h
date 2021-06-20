@@ -61,6 +61,7 @@ struct Mouse
 	double raw_x, raw_y;   // pixel coordinates
 	double norm_x, norm_y; // normalized screen coordinates
 	double dx, dy;  // pos change since last frame in pixels
+	// TODO : add norm_dx & norm_dy?
 
 	Button right_button, left_button;
 };

@@ -56,18 +56,29 @@ int main()
 
 		static float theta = PI;
 		static float cam_height = 5;
-		if (mouse.left_button.is_pressed)
+		if (mouse.left_button.is_pressed && mouse.left_button.was_pressed && !keys.SHIFT.is_pressed)
 		{
 			theta += mouse.dx * frame_time * .1;
 			cam_height += mouse.dy * frame_time * .4;
 			if (theta >= TWOPI) theta = 0;
 			if (cam_height < 3) cam_height = 3;
 			if (cam_height > 10) cam_height = 10;
+			//camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
 		}
 
-		camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
+		if (mouse.left_button.is_pressed && mouse.left_button.was_pressed && keys.SHIFT.is_pressed)
+		{
+			camera_update_pos(&camera, DIR_RIGHT, mouse.dx * frame_time);
+			camera_update_pos(&camera, DIR_UP   , mouse.dy * frame_time);
+		}
 
-		camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
+		static bool shit = true;
+		if (shit)
+		{
+			camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
+			camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
+			//shit = false;
+		}
 
 		if (mouse.left_button.is_pressed && !mouse.left_button.was_pressed) {}
 		if (mouse.right_button.is_pressed && !mouse.right_button.was_pressed){}
@@ -97,8 +108,26 @@ int main()
 
 		mat4 proj_view = proj * glm::lookAt(camera.position, camera.position + camera.front, camera.up);
 
-		vec3 mouse_dir = get_mouse_world_dir(mouse, proj_view);
-		level->bullets[0] = { 1, camera.position + (mouse_dir * 10.f), vec3{} };
+		// calculating which tile is selected by the mouse
+		vec3 intersect_point = {};
+		{
+			vec3 mouse_dir = get_mouse_world_dir(mouse, proj_view);
+			vec3 p0 = camera.position + vec3(mouse.norm_x, mouse.norm_y, 0);
+			float lambda = (1 - p0.y) / mouse_dir.y;
+
+			float x = p0.x + (lambda * mouse_dir.x);
+			float z = p0.z + (lambda * mouse_dir.z);
+
+			intersect_point = vec3(x, 1, z);
+
+			if (intersect_point.x > 0 && intersect_point.x < 16 && intersect_point.z > 0 && intersect_point.z < 16)
+			{
+				level->tiles[TILE_INDEX((int)intersect_point.x, (int)intersect_point.z)] = TILE_ROAD;
+			}
+		}
+
+		level->bullets[0] = { 1, intersect_point, vec3{} };
+		//->bullets[1] = { 1, camera.position + vec3(mouse.norm_x, mouse.norm_y, 0.5), vec3{} };
 
 		// Geometry pass
 		glBindFramebuffer(GL_FRAMEBUFFER, g_buffer.FBO);

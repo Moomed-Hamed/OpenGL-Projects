@@ -558,8 +558,10 @@ Shader make_lighting_shader()
 
 #define DIR_FORWARD	0
 #define DIR_BACKWARD	1
-#define DIR_LEFT		2
-#define DIR_RIGHT	   3
+#define DIR_LEFT	2
+#define DIR_RIGHT	3
+#define DIR_UP	4
+#define DIR_DOWN	5
 
 struct Camera
 {
@@ -598,4 +600,6 @@ void camera_update_pos(Camera* camera, int direction, float distance)
 	if (direction == DIR_LEFT    ) camera->position -= camera->right * distance;
 	if (direction == DIR_RIGHT   ) camera->position += camera->right * distance;
 	if (direction == DIR_BACKWARD) camera->position -= camera->front * distance;
+	if (direction == DIR_UP      ) camera->position += camera->up    * distance;
+	if (direction == DIR_DOWN    ) camera->position -= camera->up    * distance;
 }
