@@ -42,7 +42,7 @@ void update_level(Level* level, float dtime)
 
 			if (glm::length(next_node_pos - enemies[i].position) < .1)
 			{
-				if (enemies[i].node_index == 15) // enemy has completed path
+				if (enemies[i].node_index == 15 || level->path_nodes[enemies[i].node_index + 1].x < 0)
 				{
 					enemies[i] = {};
 					// level takes damage?
@@ -56,7 +56,7 @@ void update_level(Level* level, float dtime)
 			}
 
 			vec3 move_dir = glm::normalize(next_node_pos - enemies[i].position);
-			enemies[i].position += (move_dir * .2f) * dtime;
+			enemies[i].position += (move_dir * 5.f) * dtime;
 		}
 	}
 
@@ -75,8 +75,8 @@ void update_level(Level* level, float dtime)
 			{
 				if (enemies[j].type != NULL)
 				{
-					vec3 bullet_dir = glm::normalize(enemies[j].position - (turrets[i].position + vec3(0, 2, 0)));
-					spawn_bullet(bullets, 1, turrets[i].position + vec3(0, 2, 0), bullet_dir * 2.f);
+					vec3 bullet_dir = glm::normalize(enemies[j].position - turrets[i].position);
+					spawn_bullet(bullets, 1, turrets[i].position + vec3(0, 1, 0), bullet_dir * 10.f);
 					turrets[i].cooldown = .5;
 					break;
 				}

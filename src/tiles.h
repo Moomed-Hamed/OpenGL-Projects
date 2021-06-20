@@ -3,8 +3,9 @@
 #define MAP_X 16
 #define MAP_Z 16
 #define NUM_MAP_TILES (MAP_X * MAP_Z)
+#define TILE_INDEX(x,z) ((x) + (MAP_Z * (z)))
 
-#define TILE_GRASS 1
+#define TILE_ROAD 1 // where enemies travel
 
 typedef uint32 TileID;
 
@@ -46,7 +47,12 @@ void update_renderer(Tile_Renderer* renderer, TileID* tiles)
 	for (int z = 0; z < MAP_Z; z++)
 	{
 		tile_mem->position = vec3(x, 0, z);
-		tile_mem->color    = vec3(0.83, 0.69, 0.22);
+
+		switch (tiles[TILE_INDEX(x,z)])
+		{
+		case TILE_ROAD: tile_mem->color = vec3(.8, .8, .8); break;
+		default: tile_mem->color = vec3(.83, .69, .22);
+		}
 
 		num_tiles++;
 		tile_mem++;

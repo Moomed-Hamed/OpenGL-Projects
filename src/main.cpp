@@ -16,7 +16,15 @@ int main()
 	Camera camera = { vec3(5,5,5) };
 
 	Level* level = Alloc(Level, 1);
-	level->path_nodes[0] = { vec3(0,1,0) };
+	level->path_nodes[0] = { vec3(0,1,8)   };
+	level->path_nodes[1] = { vec3(15,1,8)  };
+	level->path_nodes[2] = { vec3(15,1,15) };
+	level->path_nodes[3] = { vec3(-1,0,0)  };
+
+	level->tiles[TILE_INDEX(0 , 0 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 15)] = TILE_ROAD;
 
 	Tile_Renderer*   tile_renderer   = Alloc(Tile_Renderer  , 1);
 	Enemy_Renderer*  enemy_renderer  = Alloc(Enemy_Renderer , 1);
@@ -68,7 +76,7 @@ int main()
 		{
 			//spawn_bullet(level->bullets, BULLET_SMALL, vec3(0, 2, 0), vec3(1, 0, 1));
 			spawn_turret(level->turrets, TURRET_SMALL, vec3(1, 1, 1));
-			spawn_enemy(level->enemies, 1, vec3(5, 1, 5));
+			spawn_enemy(level->enemies, 1, vec3(0, 1, 0));
 		}
 
 		if (keys.F.is_pressed) // flashlight
@@ -76,12 +84,6 @@ int main()
 			bind(lighting_shader);
 			set_vec3(lighting_shader, "spt_light.position" , camera.position);
 			set_vec3(lighting_shader, "spt_light.direction", camera.front);
-		}
-		else if (keys.X.is_pressed)
-		{
-			bind(lighting_shader);
-			set_vec3(lighting_shader, "spt_light.position" , vec3(0, 0, 0));
-			set_vec3(lighting_shader, "spt_light.direction", vec3(0, -1, 0));
 		}
 
 		// game state updates //
