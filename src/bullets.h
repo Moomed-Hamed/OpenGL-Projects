@@ -13,7 +13,7 @@ struct Bullet
 	float lifetime;
 };
 
-void spawn_bullet(Bullet* bullets, uint type, vec3 position, vec3 velocity)
+void spawn_bullet(Bullet* bullets, vec3 position, vec3 velocity, uint type = BULLET_SMALL)
 {
 	for (uint i = 0; i < MAX_TURRETS; i++)
 	{
@@ -22,6 +22,7 @@ void spawn_bullet(Bullet* bullets, uint type, vec3 position, vec3 velocity)
 			bullets[i].type = type;
 			bullets[i].position = position;
 			bullets[i].velocity = velocity;
+			bullets[i].damage   = 20;
 			bullets[i].lifetime = 5.f;
 
 			return;

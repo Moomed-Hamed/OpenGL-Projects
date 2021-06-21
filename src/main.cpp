@@ -54,35 +54,46 @@ int main()
 
 		if (keys.ESC.is_pressed) break;
 
-		static float theta = PI;
+		// camera control //
+
+		// for rotating
+		static float cam_theta = PI;
 		static float cam_height = 5;
-		if (mouse.left_button.is_pressed && mouse.left_button.was_pressed && !keys.SHIFT.is_pressed)
+		
+		// for panning
+		static vec3 cam_horizontal_offset = vec3(0, 0, 0);
+		static vec3 cam_vertical_offset = vec3(0, 0, 0);
+
+		if (keys.SHIFT.is_pressed) // pan mode
 		{
-			theta += mouse.dx * frame_time * .1;
-			cam_height += mouse.dy * frame_time * .4;
-			if (theta >= TWOPI) theta = 0;
-			if (cam_height < 3) cam_height = 3;
-			if (cam_height > 10) cam_height = 10;
-			//camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
+			if (mouse.left_button.is_pressed && mouse.left_button.was_pressed)
+			{
+				static float horizontal_amount = 0;
+				static float vertical_amount   = 0;
+
+				horizontal_amount += mouse.dx * frame_time;
+				vertical_amount   += mouse.dy * frame_time;
+
+				cam_horizontal_offset = camera.right * horizontal_amount;
+				cam_vertical_offset   = camera.up    * vertical_amount;
+			}
+		}
+		else // rotate mode
+		{
+			if (mouse.left_button.is_pressed && mouse.left_button.was_pressed)
+			{
+				cam_theta  += mouse.dx * frame_time * .1;
+				cam_height += mouse.dy * frame_time * .4;
+
+				if (cam_theta > TWOPI || cam_theta < 0) cam_theta = 0;
+				if (cam_height < 3) cam_height = 3;
+				if (cam_height > 10) cam_height = 10;
+			}
 		}
 
-		if (mouse.left_button.is_pressed && mouse.left_button.was_pressed && keys.SHIFT.is_pressed)
-		{
-			camera_update_pos(&camera, DIR_RIGHT, mouse.dx * frame_time);
-			camera_update_pos(&camera, DIR_UP   , mouse.dy * frame_time);
-		}
-
-		camera.position = vec3(12 * sin(theta) + 8, cam_height, 12 * cos(theta) + 8);
-		camera_update_dir(&camera, vec3(8, 1, 8) - camera.position);
-
-		if (mouse.left_button.is_pressed && !mouse.left_button.was_pressed) {}
-		if (mouse.right_button.is_pressed && !mouse.right_button.was_pressed){}
-
-		if (keys.E.is_pressed && !keys.E.was_pressed)
-		{
-			spawn_turret(level->turrets, TURRET_SMALL, vec3(1, 1, 1));
-			spawn_enemy(level->enemies, 1, vec3(0, 1, 0));
-		}
+		camera.position = vec3(12 * sin(cam_theta) + 8, cam_height, 12 * cos(cam_theta) + 8);
+		camera.position += cam_vertical_offset + cam_horizontal_offset;
+		camera_update_dir(&camera, (vec3(8, 1, 8) + cam_vertical_offset + cam_horizontal_offset) - camera.position);
 
 		if (keys.F.is_pressed) // flashlight
 		{
@@ -120,22 +131,21 @@ int main()
 				level->tiles[i] = TILE_ROAD;
 				if (keys.G.is_pressed && !keys.G.was_pressed)
 				{
-					spawn_turret(level->turrets, 1, vec3((int)intersect_point.x, 1, (int)intersect_point.z));
+					spawn_turret(level->turrets, vec3((int)intersect_point.x, 1, (int)intersect_point.z));
 				}
 			}
 		}
 
-		level->bullets[0] = { 1, intersect_point, vec3{} };
+		level->bullets[0] = { 1, intersect_point, vec3{} , 0, 10000};
 		//->bullets[1] = { 1, camera.position + vec3(mouse.norm_x, mouse.norm_y, 0.5), vec3{} };
 
-		static float enemy_spawn_timer = 1;
+		static float enemy_spawn_timer = 4;
 		enemy_spawn_timer -= frame_time;
 		if (enemy_spawn_timer < 0)
 		{
-			spawn_enemy(level->enemies, 1, vec3(0, 1, 0));
-			enemy_spawn_timer = 1;
+			spawn_enemy(level->enemies, vec3(0, 1, 0));
+			enemy_spawn_timer = 4;
 		}
-
 
 		// Geometry pass
 		glBindFramebuffer(GL_FRAMEBUFFER, g_buffer.FBO);

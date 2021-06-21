@@ -38,6 +38,14 @@ void init_window(Window* window, uint screen_width, uint screen_height, const ch
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_FRAMEBUFFER_SRGB); // gamma correction
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//audio
+	ALCdevice* audio_device= alcOpenDevice(NULL);
+	if (audio_device == NULL) { out("cannot open sound card"); }
+
+	ALCcontext* audio_context = alcCreateContext(audio_device, NULL);
+	if (audio_context == NULL) { out("cannot open context"); }
+	alcMakeContextCurrent(audio_context);
 }
 void update_window(Window window)
 {

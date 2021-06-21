@@ -13,7 +13,7 @@ struct Turret
 	float cooldown; // seconds until turret can fire
 };
 
-void spawn_turret(Turret* turrets, uint type, vec3 pos)
+void spawn_turret(Turret* turrets, vec3 pos, uint type = TURRET_SMALL)
 {
 	for (uint i = 0; i < MAX_TURRETS; i++)
 	{

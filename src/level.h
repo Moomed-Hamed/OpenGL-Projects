@@ -19,7 +19,7 @@ void update_level(Level* level, float dtime)
 	for (int i = 0; i < MAX_BULLETS; i++) {
 	for (int j = 0; j < MAX_ENEMIES; j++)
 	{
-		if (glm::length(bullets[i].position - enemies[j].position) < 1.2) // if bullet is inside an enemy
+		if (glm::length(bullets[i].position - enemies[j].position) < 1.5) // if bullet is inside an enemy
 		{
 			enemies[j].health -= bullets[i].damage;
 			bullets[i] = {}; // destroy the bullet
@@ -81,7 +81,7 @@ void update_level(Level* level, float dtime)
 
 					vec3 predict_assist = enemy_velocity_dir * 4.f;
 					vec3 bullet_dir = glm::normalize((enemies[j].position + predict_assist) - turrets[i].position);
-					spawn_bullet(bullets, 1, turrets[i].position + vec3(0, 1, 0), bullet_dir * 10.f);
+					spawn_bullet(bullets, turrets[i].position + vec3(0, 1, 0), bullet_dir * 10.f);
 					turrets[i].cooldown = .5;
 					break;
 				}

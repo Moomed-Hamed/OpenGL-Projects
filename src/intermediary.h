@@ -1,11 +1,12 @@
 // Copyright (c) 2021 Mohamed Hamed
-// Intermediary version 16.6.21
+// Intermediary version 20.6.21
 #pragma once
 
 #pragma comment(lib, "winmm")
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "external/GLEW/glew32s")
 #pragma comment(lib, "external/GLFW/glfw3")
+#pragma comment(lib, "external/OpenAL/OpenAL32.lib")
 
 #define _CRT_SECURE_NO_WARNINGS // because printf is "too dangerous"
 
@@ -15,6 +16,9 @@
 #define GLEW_STATIC
 #include <external/GLEW\glew.h> // OpenGL functions
 #include <external/GLFW\glfw3.h>// window & input
+
+#include "external/OpenAL/al.h" // for audio
+#include "external/OpenAL/alc.h"
 
 #include <Windows.h>
 #include <fileapi.h>
@@ -82,4 +86,46 @@ void os_sleep(uint milliseconds)
 #undef DESIRED_SCHEDULER_GRANULARITY
 
 	Sleep(milliseconds);
+}
+
+// --- Audio --- //
+
+/* -- how 2 play a sound --
+
+	Audio sound = load_audio("sound.audio");
+	play_sudio(sound);
+*/
+
+typedef ALuint Audio;
+
+Audio load_audio(const char* path)
+{
+	uint format;
+	uint sample_rate;
+	uint size;
+	char* audio_data;
+
+	FILE* file = fopen(path, "rb");
+	fread(&format, sizeof(uint), 1, file);
+	fread(&sample_rate, sizeof(uint), 1, file);
+	fread(&size, sizeof(uint), 1, file);
+	audio_data = Alloc(char, size);
+	fread(audio_data, sizeof(char), size, file);
+	fclose(file);
+
+	ALuint bufferid = 0;
+	alGenBuffers(1, &bufferid);
+	alBufferData(bufferid, format, audio_data, size, sample_rate);
+
+	ALuint SourceID;
+	alGenSources(1, &SourceID);
+	alSourcei(SourceID, AL_BUFFER, bufferid);
+
+	free(audio_data);
+	return SourceID;
+}
+
+void play_audio(Audio source_id)
+{
+	alSourcePlay(source_id);
 }

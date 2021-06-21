@@ -3,6 +3,7 @@
 #define MAX_ENEMIES 256
 
 #define ENEMY_GRUNT 1
+#define ENEMY_HEAVY 2
 
 struct Enemy
 {
@@ -13,7 +14,7 @@ struct Enemy
 	int node_index; // index of path node this enemy is travelling to
 };
 
-void spawn_enemy(Enemy* enemies, uint type, vec3 pos)
+void spawn_enemy(Enemy* enemies, vec3 pos, uint type = ENEMY_GRUNT)
 {
 	for (uint i = 0; i < MAX_ENEMIES; i++)
 	{
@@ -24,7 +25,8 @@ void spawn_enemy(Enemy* enemies, uint type, vec3 pos)
 
 			switch (type)
 			{
-			//case ENEMY_GRUNT: enemies[i].position = vec3(0, 0, 0); break;
+			case ENEMY_GRUNT: enemies[i].health = 100; break;
+			case ENEMY_HEAVY: enemies[i].health = 200; break;
 			}
 
 			return;
@@ -82,7 +84,7 @@ void update_renderer(Enemy_Renderer* renderer, Enemy* enemies)
 		if (enemies[i].type != NULL)
 		{
 			enemy_mem->position = enemies[i].position;
-			enemy_mem->color = vec3(1, 0, 0);
+			enemy_mem->color = vec3(enemies[i].health / 200, 0, 1);
 
 			num_enemies++;
 			enemy_mem++;

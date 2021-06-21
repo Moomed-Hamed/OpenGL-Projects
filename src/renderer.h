@@ -568,6 +568,9 @@ struct Camera
 	vec3 position;
 	vec3 front, right, up;
 	float yaw, pitch;
+
+	//vec3 horizontal_offset, vertical_offset;
+	//float theta;
 };
 
 void camera_update_dir(Camera* camera, float dx, float dy, float sensitivity = 0.003)
