@@ -53,6 +53,7 @@ struct Bullet_Drawable
 {
 	vec3 position;
 	vec3 color;
+	mat3 rotation;
 };
 
 struct Bullet_Renderer
@@ -69,8 +70,9 @@ void init(Bullet_Renderer* renderer)
 	load(&renderer->mesh, "assets/meshes/bullet.mesh", sizeof(renderer->bullets));
 	mesh_add_attrib_vec3(2, sizeof(Bullet_Drawable), 0); // world pos
 	mesh_add_attrib_vec3(3, sizeof(Bullet_Drawable), sizeof(vec3)); // color
+	mesh_add_attrib_mat3(4, sizeof(Bullet_Drawable), sizeof(vec3) * 2); // rotation
 
-	load(&(renderer->shader), "assets/shaders/cell.vert", "assets/shaders/cell.frag");
+	load(&(renderer->shader), "assets/shaders/rot.vert", "assets/shaders/cell.frag");
 	bind(renderer->shader);
 	set_int(renderer->shader, "positions", 0);
 	set_int(renderer->shader, "normals"  , 1);
@@ -87,6 +89,7 @@ void update_renderer(Bullet_Renderer* renderer, Bullet* bullets)
 		{
 			memory->position = bullets[i].position;
 			memory->color = vec3(1, 1, 1);
+			memory->rotation = point_at(glm::normalize(bullets[i].velocity), vec3(0, 1, 0));
 
 			num_bullets++;
 			memory++;

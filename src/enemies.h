@@ -84,7 +84,7 @@ void update_renderer(Enemy_Renderer* renderer, Enemy* enemies)
 		if (enemies[i].type != NULL)
 		{
 			enemy_mem->position = enemies[i].position;
-			enemy_mem->color = vec3(enemies[i].health / 200, 0, 1);
+			enemy_mem->color = vec3(enemies[i].health / 100, 0, 0);
 
 			num_enemies++;
 			enemy_mem++;

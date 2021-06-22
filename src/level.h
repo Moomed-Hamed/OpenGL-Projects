@@ -65,30 +65,30 @@ void update_level(Level* level, float dtime)
 	{
 		if (turrets[i].type == NULL) continue;
 
-		if (turrets[i].cooldown > 0)
+		for (int j = 0; j < MAX_ENEMIES; j++)
 		{
-			turrets[i].cooldown -= dtime;
-		}
-		else
-		{
-			for (int j = 0; j < MAX_ENEMIES; j++)
+			if (enemies[j].type != NULL)
 			{
-				if (enemies[j].type != NULL)
+				vec3 next_node_pos = level->path_nodes[enemies[i].node_index];
+				vec3 enemy_velocity_dir = glm::normalize(next_node_pos - enemies[i].position);
+				vec3 predict_assist = enemy_velocity_dir * 4.f;
+				vec3 bullet_dir = glm::normalize((enemies[j].position + predict_assist) - turrets[i].position);
+				
+				turrets[i].aim_direction = vec3(bullet_dir.x, 0, bullet_dir.z);
+
+				if (turrets[i].cooldown > 0)
 				{
-					vec3 next_node_pos = level->path_nodes[enemies[i].node_index];
-					vec3 enemy_velocity_dir = glm::normalize(next_node_pos - enemies[i].position);
-
-
-					vec3 predict_assist = enemy_velocity_dir * 4.f;
-					vec3 bullet_dir = glm::normalize((enemies[j].position + predict_assist) - turrets[i].position);
+					turrets[i].cooldown -= dtime;
+				}
+				else
+				{
 					spawn_bullet(bullets, turrets[i].position + vec3(0, 1, 0), bullet_dir * 10.f);
 					turrets[i].cooldown = .5;
-					break;
 				}
+
+				break;
 			}
 		}
-		// aim at the nearest enemy
-		// fire a bullet
 	}
 
 	update_bullets(bullets, dtime);

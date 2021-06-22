@@ -20,9 +20,9 @@ void spawn_turret(Turret* turrets, vec3 pos, uint type = TURRET_SMALL)
 		if (turrets[i].type == NULL)
 		{
 			turrets[i].type = type;
-			turrets[i].position = pos;
-			turrets[i].aim_direction = vec3(1, 0, 1);
-			turrets[i].target_pos= {};
+			turrets[i].position = pos + vec3(0.5, 0, 0.5);
+			turrets[i].aim_direction = glm::normalize(vec3(1, 0, 1));
+			turrets[i].target_pos = {};
 			turrets[i].cooldown = -1;
 
 			return;
@@ -47,6 +47,7 @@ struct Turret_Drawable
 {
 	vec3 position;
 	vec3 color;
+	mat3 rotation;
 };
 
 struct Turret_Renderer
@@ -63,8 +64,9 @@ void init(Turret_Renderer* renderer)
 	load(&renderer->mesh, "assets/meshes/turret.mesh", sizeof(renderer->turrets));
 	mesh_add_attrib_vec3(2, sizeof(Turret_Drawable), 0); // world pos
 	mesh_add_attrib_vec3(3, sizeof(Turret_Drawable), sizeof(vec3)); // color
+	mesh_add_attrib_mat3(4, sizeof(Turret_Drawable), sizeof(vec3) * 2); // rotation
 
-	load(&(renderer->shader), "assets/shaders/cell.vert", "assets/shaders/cell.frag");
+	load(&(renderer->shader), "assets/shaders/rot.vert", "assets/shaders/cell.frag");
 	bind(renderer->shader);
 	set_int(renderer->shader, "positions", 0);
 	set_int(renderer->shader, "normals"  , 1);
@@ -81,6 +83,7 @@ void update_renderer(Turret_Renderer* renderer, Turret* turrets)
 		{
 			memory->position = turrets[i].position;
 			memory->color = vec3(.5, 1, 1);
+			memory->rotation = point_at(turrets[i].aim_direction, vec3(0, 1, 0));
 
 			num_turrets++;
 			memory++;

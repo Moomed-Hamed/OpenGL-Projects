@@ -14,6 +14,7 @@ int main()
 	init_keyboard(&keys);
 
 	Camera camera = { vec3(5,5,5) };
+	camera.height = 5;
 
 	Level* level = Alloc(Level, 1);
 	level->path_nodes[0] = { vec3(0,1,8)   };
@@ -54,46 +55,17 @@ int main()
 
 		if (keys.ESC.is_pressed) break;
 
-		// camera control //
-
-		// for rotating
-		static float cam_theta = PI;
-		static float cam_height = 5;
-		
-		// for panning
-		static vec3 cam_horizontal_offset = vec3(0, 0, 0);
-		static vec3 cam_vertical_offset = vec3(0, 0, 0);
-
-		if (keys.SHIFT.is_pressed) // pan mode
+		// camera control
+		if (mouse.left_button.is_pressed && mouse.left_button.was_pressed && keys.SHIFT.is_pressed)
 		{
-			if (mouse.left_button.is_pressed && mouse.left_button.was_pressed)
-			{
-				static float horizontal_amount = 0;
-				static float vertical_amount   = 0;
-
-				horizontal_amount += mouse.dx * frame_time;
-				vertical_amount   += mouse.dy * frame_time;
-
-				cam_horizontal_offset = camera.right * horizontal_amount;
-				cam_vertical_offset   = camera.up    * vertical_amount;
-			}
+			camera_pan(&camera, mouse.dx, mouse.dy, frame_time);
 		}
-		else // rotate mode
+		else if (mouse.left_button.is_pressed && mouse.left_button.was_pressed)
 		{
-			if (mouse.left_button.is_pressed && mouse.left_button.was_pressed)
-			{
-				cam_theta  += mouse.dx * frame_time * .1;
-				cam_height += mouse.dy * frame_time * .4;
-
-				if (cam_theta > TWOPI || cam_theta < 0) cam_theta = 0;
-				if (cam_height < 3) cam_height = 3;
-				if (cam_height > 10) cam_height = 10;
-			}
+			camera_rotate(&camera, mouse.dx, mouse.dy, frame_time);
 		}
 
-		camera.position = vec3(12 * sin(cam_theta) + 8, cam_height, 12 * cos(cam_theta) + 8);
-		camera.position += cam_vertical_offset + cam_horizontal_offset;
-		camera_update_dir(&camera, (vec3(8, 1, 8) + cam_vertical_offset + cam_horizontal_offset) - camera.position);
+		camera_update(&camera);
 
 		if (keys.F.is_pressed) // flashlight
 		{
@@ -128,7 +100,6 @@ int main()
 			if (intersect_point.x > 0 && intersect_point.x < 16 && intersect_point.z > 0 && intersect_point.z < 16)
 			{
 				int i = TILE_INDEX((int)intersect_point.x, (int)intersect_point.z);
-				level->tiles[i] = TILE_ROAD;
 				if (keys.G.is_pressed && !keys.G.was_pressed)
 				{
 					spawn_turret(level->turrets, vec3((int)intersect_point.x, 1, (int)intersect_point.z));
@@ -136,8 +107,7 @@ int main()
 			}
 		}
 
-		level->bullets[0] = { 1, intersect_point, vec3{} , 0, 10000};
-		//->bullets[1] = { 1, camera.position + vec3(mouse.norm_x, mouse.norm_y, 0.5), vec3{} };
+		level->bullets[0] = { 1, intersect_point, vec3(1,0,1), 0, 10000 };
 
 		static float enemy_spawn_timer = 4;
 		enemy_spawn_timer -= frame_time;
@@ -153,6 +123,7 @@ int main()
 
 		bind(tile_renderer->tile_shader);
 		set_mat4(tile_renderer->tile_shader, "proj_view", proj_view);
+		bind_texture(tile_renderer->tile_mesh, 3);
 		draw(tile_renderer->tile_mesh, tile_renderer->num_tiles);
 
 		bind(enemy_renderer->shader);
