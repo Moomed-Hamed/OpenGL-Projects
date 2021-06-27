@@ -43,53 +43,76 @@ void update_turrets(Turret* turrets)
 
 // rendering
 
-struct Turret_Drawable
+struct Turret_Cannon_Drawable
 {
 	vec3 position;
 	vec3 color;
 	mat3 rotation;
 };
 
+struct Turret_Platform_Drawable
+{
+	vec3 position;
+	vec3 color;
+};
+
 struct Turret_Renderer
 {
 	uint num_turrets;
-	Turret_Drawable turrets[MAX_TURRETS];
+	Turret_Cannon_Drawable cannons[MAX_TURRETS];
+	Turret_Platform_Drawable platforms[MAX_TURRETS];
 
-	Drawable_Mesh mesh;
-	Shader shader;
+	Drawable_Mesh cannon_mesh, platform_mesh;
+	Shader cannon_shader, platform_shader;
 };
 
 void init(Turret_Renderer* renderer)
 {
-	load(&renderer->mesh, "assets/meshes/turret.mesh", sizeof(renderer->turrets));
-	mesh_add_attrib_vec3(2, sizeof(Turret_Drawable), 0); // world pos
-	mesh_add_attrib_vec3(3, sizeof(Turret_Drawable), sizeof(vec3)); // color
-	mesh_add_attrib_mat3(4, sizeof(Turret_Drawable), sizeof(vec3) * 2); // rotation
+	load(&renderer->cannon_mesh, "assets/meshes/turret.mesh", sizeof(renderer->cannons));
+	mesh_add_attrib_vec3(2, sizeof(Turret_Cannon_Drawable), 0); // world pos
+	mesh_add_attrib_vec3(3, sizeof(Turret_Cannon_Drawable), sizeof(vec3)); // color
+	mesh_add_attrib_mat3(4, sizeof(Turret_Cannon_Drawable), sizeof(vec3) * 2); // rotation
 
-	load(&(renderer->shader), "assets/shaders/rot.vert", "assets/shaders/cell.frag");
-	bind(renderer->shader);
-	set_int(renderer->shader, "positions", 0);
-	set_int(renderer->shader, "normals"  , 1);
-	set_int(renderer->shader, "albedo"   , 2);
+	load(&(renderer->cannon_shader), "assets/shaders/rot.vert", "assets/shaders/cell.frag");
+	bind(renderer->cannon_shader);
+	set_int(renderer->cannon_shader, "positions", 0);
+	set_int(renderer->cannon_shader, "normals"  , 1);
+	set_int(renderer->cannon_shader, "albedo"   , 2);
+
+	load(&renderer->platform_mesh, "assets/meshes/turret_platform.mesh", sizeof(renderer->platforms));
+	mesh_add_attrib_vec3(2, sizeof(Turret_Platform_Drawable), 0); // world pos
+	mesh_add_attrib_vec3(3, sizeof(Turret_Platform_Drawable), sizeof(vec3)); // color
+
+	load(&(renderer->platform_shader), "assets/shaders/cell.vert", "assets/shaders/cell.frag");
+	bind(renderer->platform_shader);
+	set_int(renderer->platform_shader, "positions", 0);
+	set_int(renderer->platform_shader, "normals"  , 1);
+	set_int(renderer->platform_shader, "albedo"   , 2);
 }
 void update_renderer(Turret_Renderer* renderer, Turret* turrets)
 {
 	uint num_turrets = 0;
-	Turret_Drawable* memory = renderer->turrets;
+	Turret_Cannon_Drawable*   cannon_memory   = renderer->cannons;
+	Turret_Platform_Drawable* platform_memory = renderer->platforms;
 
 	for (uint i = 0; i < MAX_TURRETS; i++)
 	{
 		if (turrets[i].type != NULL)
 		{
-			memory->position = turrets[i].position;
-			memory->color = vec3(.5, 1, 1);
-			memory->rotation = point_at(turrets[i].aim_direction, vec3(0, 1, 0));
+			cannon_memory->position = turrets[i].position;
+			cannon_memory->color = vec3(.5, 1, 1);
+			cannon_memory->rotation = point_at(turrets[i].aim_direction, vec3(0, 1, 0));
+
+			platform_memory->position = turrets[i].position;
+			platform_memory->color = vec3(.5, 3, 1);
 
 			num_turrets++;
-			memory++;
+			cannon_memory++;
+			platform_memory++;
 		}
 	}
 
 	renderer->num_turrets = num_turrets;
-	update(renderer->mesh, num_turrets * sizeof(Turret_Drawable), (byte*)renderer->turrets);
+	update(renderer->cannon_mesh  , num_turrets * sizeof(Turret_Cannon_Drawable)  , (byte*)renderer->cannons);
+	update(renderer->platform_mesh, num_turrets * sizeof(Turret_Platform_Drawable), (byte*)renderer->platforms);
 }

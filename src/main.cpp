@@ -130,9 +130,13 @@ int main()
 		set_mat4(enemy_renderer->shader, "proj_view", proj_view);
 		draw(enemy_renderer->mesh, enemy_renderer->num_enemies);
 
-		bind(turret_renderer->shader);
-		set_mat4(turret_renderer->shader, "proj_view", proj_view);
-		draw(turret_renderer->mesh, turret_renderer->num_turrets);
+		bind(turret_renderer->cannon_shader);
+		set_mat4(turret_renderer->cannon_shader, "proj_view", proj_view);
+		draw(turret_renderer->cannon_mesh, turret_renderer->num_turrets);
+
+		bind(turret_renderer->platform_shader);
+		set_mat4(turret_renderer->platform_shader, "proj_view", proj_view);
+		draw(turret_renderer->platform_mesh, turret_renderer->num_turrets);
 
 		bind(bullet_renderer->shader);
 		set_mat4(bullet_renderer->shader, "proj_view", proj_view);
