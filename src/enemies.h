@@ -21,7 +21,7 @@ void spawn_enemy(Enemy* enemies, vec3 pos, uint type = ENEMY_GRUNT)
 		if (enemies[i].type == NULL)
 		{
 			enemies[i].type = type;
-			enemies[i].position = pos;
+			enemies[i].position = pos + vec3(0.5, 0, 0.5);
 
 			switch (type)
 			{
@@ -50,7 +50,6 @@ void update_enemies(Enemy* enemies)
 struct Enemy_Drawable
 {
 	vec3 position;
-	vec3 color;
 };
 
 struct Enemy_Renderer
@@ -58,21 +57,21 @@ struct Enemy_Renderer
 	uint num_enemies;
 	Enemy_Drawable enemies[MAX_ENEMIES];
 
-	Drawable_Mesh mesh;
+	Drawable_Mesh_UV mesh;
 	Shader shader;
 };
 
 void init(Enemy_Renderer* renderer)
 {
-	load(&renderer->mesh, "assets/meshes/cube.mesh", sizeof(renderer->enemies));
-	mesh_add_attrib_vec3(2, sizeof(Enemy_Drawable), 0); // world pos
-	mesh_add_attrib_vec3(3, sizeof(Enemy_Drawable), sizeof(vec3)); // color
+	load(&renderer->mesh, "assets/meshes/enemy.mesh_uv", "assets/textures/pallete.bmp", sizeof(renderer->enemies));
+	mesh_add_attrib_vec3(3, sizeof(Enemy_Drawable), 0); // world pos
 
-	load(&(renderer->shader), "assets/shaders/cell.vert", "assets/shaders/cell.frag");
+	load(&(renderer->shader), "assets/shaders/enemy.vert", "assets/shaders/tile.frag");
 	bind(renderer->shader);
 	set_int(renderer->shader, "positions", 0);
 	set_int(renderer->shader, "normals"  , 1);
 	set_int(renderer->shader, "albedo"   , 2);
+	set_int(renderer->shader, "texture_sampler", 4);
 }
 void update_renderer(Enemy_Renderer* renderer, Enemy* enemies)
 {
@@ -84,7 +83,6 @@ void update_renderer(Enemy_Renderer* renderer, Enemy* enemies)
 		if (enemies[i].type != NULL)
 		{
 			enemy_mem->position = enemies[i].position;
-			enemy_mem->color = vec3(enemies[i].health / 100, 0, 0);
 
 			num_enemies++;
 			enemy_mem++;

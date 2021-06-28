@@ -71,7 +71,7 @@ void update_level(Level* level, float dtime)
 			{
 				vec3 next_node_pos = level->path_nodes[enemies[i].node_index];
 				vec3 enemy_velocity_dir = glm::normalize(next_node_pos - enemies[i].position);
-				vec3 predict_assist = enemy_velocity_dir * 4.f;
+				vec3 predict_assist = enemy_velocity_dir * 3.f;
 				vec3 bullet_dir = glm::normalize((enemies[j].position + predict_assist) - turrets[i].position);
 				
 				turrets[i].aim_direction = vec3(bullet_dir.x, 0, bullet_dir.z);

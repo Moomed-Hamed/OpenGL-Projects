@@ -13,18 +13,45 @@ int main()
 	init_window(&window, 1920, 1080, "tower defense game");
 	init_keyboard(&keys);
 
-	Camera camera = { vec3(5,5,5) };
-	camera.height = 5;
+	Camera camera = { vec3(5, 5, 5) };
+	camera.height = 3;
 
 	Level* level = Alloc(Level, 1);
-	level->path_nodes[0] = { vec3(0,1,8)   };
-	level->path_nodes[1] = { vec3(15,1,8)  };
-	level->path_nodes[2] = { vec3(15,1,15) };
-	level->path_nodes[3] = { vec3(-1,0,0)  };
+	level->path_nodes[0] = { vec3(0, 1, 8.5)   };
+	level->path_nodes[1] = { vec3(15.5, 1, 8.5)  };
+	level->path_nodes[2] = { vec3(15.5, 1, 15.5) };
+	level->path_nodes[3] = { vec3(-.5, 0, 0.5)   };
 
 	level->tiles[TILE_INDEX(0 , 0 )] = TILE_ROAD;
-	level->tiles[TILE_INDEX(0 , 8 )] = TILE_ROAD;
-	level->tiles[TILE_INDEX(15, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 1 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 2 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 3 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 4 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 5 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 6 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 7 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(0 , 8 )] = TILE_ROAD; //
+	level->tiles[TILE_INDEX(1 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(2 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(3 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(4 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(5 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(6 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(7 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(8 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(9 , 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(10, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(11, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(12, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(13, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(14, 8 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 8 )] = TILE_ROAD; //
+	level->tiles[TILE_INDEX(15, 9 )] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 10)] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 11)] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 12)] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 13)] = TILE_ROAD;
+	level->tiles[TILE_INDEX(15, 14)] = TILE_ROAD;
 	level->tiles[TILE_INDEX(15, 15)] = TILE_ROAD;
 
 	Tile_Renderer*   tile_renderer   = Alloc(Tile_Renderer  , 1);
@@ -109,12 +136,12 @@ int main()
 
 		level->bullets[0] = { 1, intersect_point, vec3(1,0,1), 0, 10000 };
 
-		static float enemy_spawn_timer = 4;
+		static float enemy_spawn_timer = 1;
 		enemy_spawn_timer -= frame_time;
 		if (enemy_spawn_timer < 0)
 		{
-			spawn_enemy(level->enemies, vec3(0, 1, 0));
-			enemy_spawn_timer = 4;
+			spawn_enemy(level->enemies, vec3(0.5, 1, 0.5));
+			enemy_spawn_timer = .76;
 		}
 
 		// Geometry pass
@@ -128,18 +155,22 @@ int main()
 
 		bind(enemy_renderer->shader);
 		set_mat4(enemy_renderer->shader, "proj_view", proj_view);
+		bind_texture(enemy_renderer->mesh, 4);
 		draw(enemy_renderer->mesh, enemy_renderer->num_enemies);
 
 		bind(turret_renderer->cannon_shader);
 		set_mat4(turret_renderer->cannon_shader, "proj_view", proj_view);
+		bind_texture(turret_renderer->cannon_mesh, 4);
 		draw(turret_renderer->cannon_mesh, turret_renderer->num_turrets);
 
 		bind(turret_renderer->platform_shader);
 		set_mat4(turret_renderer->platform_shader, "proj_view", proj_view);
+		bind_texture(turret_renderer->platform_mesh, 4);
 		draw(turret_renderer->platform_mesh, turret_renderer->num_turrets);
 
 		bind(bullet_renderer->shader);
 		set_mat4(bullet_renderer->shader, "proj_view", proj_view);
+		bind_texture(bullet_renderer->mesh, 4);
 		draw(bullet_renderer->mesh, bullet_renderer->num_bullets);
 
 		// Lighting pass

@@ -52,7 +52,6 @@ void update_bullets(Bullet* bullets, float dtime)
 struct Bullet_Drawable
 {
 	vec3 position;
-	vec3 color;
 	mat3 rotation;
 };
 
@@ -61,22 +60,22 @@ struct Bullet_Renderer
 	uint num_bullets;
 	Bullet_Drawable bullets[MAX_TURRETS];
 
-	Drawable_Mesh mesh;
+	Drawable_Mesh_UV mesh;
 	Shader shader;
 };
 
 void init(Bullet_Renderer* renderer)
 {
-	load(&renderer->mesh, "assets/meshes/bullet.mesh", sizeof(renderer->bullets));
-	mesh_add_attrib_vec3(2, sizeof(Bullet_Drawable), 0); // world pos
-	mesh_add_attrib_vec3(3, sizeof(Bullet_Drawable), sizeof(vec3)); // color
-	mesh_add_attrib_mat3(4, sizeof(Bullet_Drawable), sizeof(vec3) * 2); // rotation
+	load(&renderer->mesh, "assets/meshes/bullet.mesh_uv", "assets/textures/pallete.bmp", sizeof(renderer->bullets));
+	mesh_add_attrib_vec3(3, sizeof(Bullet_Drawable), 0); // world pos
+	mesh_add_attrib_mat3(4, sizeof(Bullet_Drawable), sizeof(vec3)); // rotation
 
-	load(&(renderer->shader), "assets/shaders/rot.vert", "assets/shaders/cell.frag");
+	load(&(renderer->shader), "assets/shaders/bullet.vert", "assets/shaders/tile.frag");
 	bind(renderer->shader);
 	set_int(renderer->shader, "positions", 0);
 	set_int(renderer->shader, "normals"  , 1);
 	set_int(renderer->shader, "albedo"   , 2);
+	set_int(renderer->shader, "texture_sampler", 4);
 }
 void update_renderer(Bullet_Renderer* renderer, Bullet* bullets)
 {
@@ -88,7 +87,6 @@ void update_renderer(Bullet_Renderer* renderer, Bullet* bullets)
 		if (bullets[i].type != NULL)
 		{
 			memory->position = bullets[i].position;
-			memory->color = vec3(1, 1, 1);
 			memory->rotation = point_at(glm::normalize(bullets[i].velocity), vec3(0, 1, 0));
 
 			num_bullets++;

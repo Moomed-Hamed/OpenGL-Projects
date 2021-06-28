@@ -251,23 +251,26 @@ void load(Drawable_Mesh_UV* mesh, const char* path, const char* texture_path, ui
 		glEnableVertexAttribArray(tex_attrib);
 	}
 
-	int width, height, num_channels;
-	byte* image;
+	if (texture_path)
+	{
+		int width, height, num_channels;
+		byte* image;
 
-	stbi_set_flip_vertically_on_load(true);
+		stbi_set_flip_vertically_on_load(true);
 
-	image = stbi_load(texture_path, &width, &height, &num_channels, 0);
+		image = stbi_load(texture_path, &width, &height, &num_channels, 0);
 
-	glGenTextures(1, &(mesh->texture_id));
-	glBindTexture(GL_TEXTURE_2D, mesh->texture_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glGenerateMipmap(GL_TEXTURE_2D);
+		glGenTextures(1, &(mesh->texture_id));
+		glBindTexture(GL_TEXTURE_2D, mesh->texture_id);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-	stbi_image_free(image);
+		stbi_image_free(image);
+	}
 }
 void update(Drawable_Mesh_UV mesh, uint vb_size, byte* vb_data)
 {

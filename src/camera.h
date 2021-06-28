@@ -20,9 +20,9 @@ struct Camera
 void camera_pan(Camera* camera, float dx, float dy, float dtime)
 {
 	static float horizontal_amount = 0;
-	static float vertical_amount = 0;
+	static float vertical_amount   = 0;
 
-	horizontal_amount += dx * dtime;
+	horizontal_amount -= dx * dtime;
 	vertical_amount   += dy * dtime;
 
 	camera->horizontal_offset = camera->right * horizontal_amount;
@@ -76,7 +76,8 @@ void camera_update_pos(Camera* camera, int direction, float distance)
 
 void camera_update(Camera* camera)
 {
-	camera->position = vec3(12 * sin(camera->theta) + 8, camera->height, 12 * cos(camera->theta) + 8);
+	float radius = 12;
+	camera->position = vec3(radius * sin(camera->theta) + 8, camera->height, radius * cos(camera->theta) + 8);
 	camera->position += camera->vertical_offset + camera->horizontal_offset;
 	camera_update_dir(camera, (vec3(8, 1, 8) + camera->vertical_offset + camera->horizontal_offset) - camera->position);
 }
