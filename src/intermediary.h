@@ -1,6 +1,5 @@
 // Copyright (c) 2021 Mohamed Hamed
-// Intermediary version 24.6.21
-#pragma once
+// Intermediary version 9.7.21
 
 #pragma comment(lib, "winmm")
 #pragma comment(lib, "opengl32")
